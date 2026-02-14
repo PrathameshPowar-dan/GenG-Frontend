@@ -5,14 +5,15 @@ import { ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import { featuresData } from "@/data/features";
 import { IFeature } from "@/types";
+import Link from "next/link";
 
 export default function FeaturesSection() {
     return (
         <div id="features" className="px-4 md:px-16 lg:px-24 xl:px-32">
-            <SectionTitle text1="Features" text2="What you get" text3="Components, patterns and pages — everything you need to ship." />
+            <SectionTitle text1="Features" text2="What you get" text3="Everything you need to Dress Up." />
             <div className="flex flex-wrap items-center justify-center gap-6 md:gap-4 mt-16 px-6">
                 {featuresData.map((feature: IFeature, index: number) => (
-                    <motion.div key={index} className={`${index === 1 ? 'p-px rounded-[13px] bg-linear-to-br from-purple-600 to-slate-800' : ''}`}
+                    <motion.div key={index} className={'p-px rounded-[13px] bg-linear-to-br from-purple-600 to-slate-800'}
                         initial={{ y: 150, opacity: 0 }}
                         whileInView={{ y: 0, opacity: 1 }}
                         viewport={{ once: true }}
@@ -38,7 +39,7 @@ export default function FeaturesSection() {
                     viewport={{ once: true }}
                     transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
                 >
-                    PrebuiltUI helps you build faster by transforming your design vision into fully functional, production-ready UI components.
+                    GenGenie helps you dress faster by transforming your vision into fully functional you, Occassian ready you.
                 </motion.p>
                 <div className="grid grid-cols-1 md:grid-cols-3 mt-8 gap-10">
                     <motion.div className="md:col-span-2"
@@ -47,7 +48,7 @@ export default function FeaturesSection() {
                         viewport={{ once: true }}
                         transition={{ type: "spring", stiffness: 240, damping: 70, mass: 1 }}
                     >
-                        <Image className="h-full w-auto" src="/assets/features-showcase-1.png" alt="features showcase" width={1000} height={500} />
+                        <Image className="h-full rounded-3xl w-auto" src="/assets/GenGenieShowCase2.png" alt="features showcase" width={1000} height={500} />
                     </motion.div>
                     <motion.div className="md:col-span-1"
                         initial={{ y: 150, opacity: 0 }}
@@ -55,13 +56,13 @@ export default function FeaturesSection() {
                         viewport={{ once: true }}
                         transition={{ delay: 0.15, type: "spring", stiffness: 320, damping: 70, mass: 1 }}
                     >
-                        <Image src="/assets/features-showcase-2.png" alt="features showcase" width={1000} height={500} className="hover:-translate-y-0.5 transition duration-300" />
-                        <h3 className="text-[24px]/7.5 text-slate-300 font-medium mt-6">Better design with highest revenue and profits </h3>
-                        <p className="text-slate-300 mt-2">PrebuiltUI empowers you to build beautifully and scale effortlessly.</p>
-                        <a href="https://prebuiltui.com" className="group flex items-center gap-2 mt-4 text-purple-600 hover:text-purple-700 transition">
-                            Learn more about the product
+                        <Image src="/assets/GenGenieShowCase3.png"  alt="features showcase" width={1000} height={500} className="hover:-translate-y-0.5 rounded-2xl transition duration-300" />
+                        <h3 className="text-[24px]/7.5 text-slate-300 font-medium mt-6">Clothes matter to! </h3>
+                        <p className="text-slate-300 mt-2">GenGenie empowers you to dress beautifully and scale effortlessly.</p>
+                        <Link href="/" onClick={()=>scrollTo(0,0)} className="group flex items-center gap-2 mt-4 text-purple-600 hover:text-purple-700 transition">
+                            Learn More
                             <ArrowUpRight className="size-5 group-hover:translate-x-0.5 transition duration-300" />
-                        </a>
+                        </Link>
                     </motion.div>
                 </div>
             </div>

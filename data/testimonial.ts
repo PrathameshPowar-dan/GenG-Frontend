@@ -27,6 +27,6 @@ export const testimonialsData: ITestimonial[] = [
         name: 'Liam Brooks',
         handle: '@liambrooks',
         date: 'May 18, 2025',
-        quote: 'Setup was ridiculously easy. Within 10 minutes, we were running live and onboarding our first customers.',
+        quote: 'Setup was ridiculously easy. Within minutes, we were dressed.',
     },
 ];

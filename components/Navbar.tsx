@@ -39,7 +39,7 @@ export default function Navbar() {
                 </button>
             </motion.nav>
 
-            <div className={`fixed inset-0 z-100 bg-black/40 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 md:hidden transition-transform duration-400 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
+            <div className={`fixed inset-0 z-100 bg-black/80 backdrop-blur flex flex-col items-center justify-center text-lg gap-8 md:hidden transition-transform duration-400 ${isOpen ? "translate-x-0" : "-translate-x-full"}`}>
                 {navlinks.map((link: INavLink) => (
                     <Link key={link.name} href={link.href} onNavigate={() => setIsOpen(false)}>
                         {link.name}

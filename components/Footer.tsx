@@ -16,7 +16,7 @@ export default function Footer() {
                 transition={{ type: "spring", stiffness: 280, damping: 70, mass: 1 }}
             >
                 <a href="https://prebuiltui.com?utm_source=pixels">
-                    <Image className="size-8 aspect-square" src="/assets/footer-logo.svg" alt="footer logo" width={32} height={32} priority />
+                    <Image className="size-8 aspect-square" src="/assets/GenGenie.png" alt="footer logo" width={32} height={32} priority />
                 </a>
                 {footerData.map((section, index) => (
                     <div key={index}>
@@ -44,13 +44,13 @@ export default function Footer() {
                     <a href="https://dribbble.com/prebuiltui" target="_blank" rel="noreferrer">
                         <DribbbleIcon className="size-5 hover:text-purple-500" />
                     </a>
-                    <a href="https://www.linkedin.com/company/prebuiltui" target="_blank" rel="noreferrer">
+                    <a href="https://www.linkedin.com/in/prathamesh-powar-dan" target="_blank" rel="noreferrer">
                         <LinkedinIcon className="size-5 hover:text-purple-500" />
                     </a>
-                    <a href="https://x.com/prebuiltui" target="_blank" rel="noreferrer">
+                    <a href="/" target="_blank" rel="noreferrer">
                         <TwitterIcon className="size-5 hover:text-purple-500" />
                     </a>
-                    <a href="https://www.youtube.com/@prebuiltui" target="_blank" rel="noreferrer">
+                    <a href="/" target="_blank" rel="noreferrer">
                         <YoutubeIcon className="size-6 hover:text-purple-500" />
                     </a>
                 </div>

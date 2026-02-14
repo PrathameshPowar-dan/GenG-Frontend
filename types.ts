@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface SectionTitleProps {
     text1: string;
     text2: string;
@@ -18,7 +20,7 @@ export interface ITestimonial {
 }
 
 export interface IFeature {
-    icon: string;
+    icon: ReactNode;
     title: string;
     description: string;
 }
