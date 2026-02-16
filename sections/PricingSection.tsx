@@ -18,9 +18,14 @@ export default function PricingSection() {
                         viewport={{ once: true }}
                         transition={{ delay: index * 0.15, type: "spring", stiffness: 320, damping: 70, mass: 1 }}
                     >
-                        {plan.mostPopular && (
-                            <p className="absolute px-3 text-sm -top-3.5 left-3.5 py-1 bg-purple-400 rounded-full">Most Popular</p>
-                        )}
+                        {plan.mostPopular == true && plan.price == 0 ? (
+                            <p className="absolute px-3 text-sm -top-3.5 left-3.5 py-1 bg-purple-400 rounded-full">FREE</p>
+                        )
+                            :
+                            (
+                                <p className="absolute px-3 text-sm -top-3.5 left-3.5 py-1 bg-purple-400 rounded-full">Most Popular</p>
+                            )
+                        }
                         <p className="font-semibold">{plan.name}</p>
                         <h1 className="text-3xl font-semibold">${plan.price}<span className="text-gray-500 font-normal text-sm">/{plan.period}</span></h1>
                         <ul className="list-none text-slate-300 mt-6 space-y-2">
@@ -31,9 +36,15 @@ export default function PricingSection() {
                                 </li>
                             ))}
                         </ul>
-                        <button type="button" className={`w-full py-2.5 rounded-md font-medium mt-7 transition-all ${plan.mostPopular ? 'bg-white text-purple-600 hover:bg-slate-200' : 'bg-purple-500 hover:bg-purple-600'}`}>
-                            Get Started
-                        </button>
+                        {plan.price == 0 ?
+                            <button type="button" onClick={()=>scrollTo(0,0)} className={`w-full py-2.5 rounded-md font-medium mt-7 transition-all ${plan.mostPopular ? 'bg-white text-purple-600 hover:bg-slate-200' : 'bg-purple-500 hover:bg-purple-600'}`}>
+                                FREE
+                            </button>
+                            :
+                            <button type="button" className={`w-full py-2.5 rounded-md font-medium mt-7 transition-all ${plan.mostPopular ? 'bg-white text-purple-600 hover:bg-slate-200' : 'bg-purple-500 hover:bg-purple-600'}`}>
+                                Get Started
+                            </button>
+                        }
                     </motion.div>
                 ))}
             </div>

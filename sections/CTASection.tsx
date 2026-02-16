@@ -32,6 +32,7 @@ export default function CTASection() {
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ type: "spring", stiffness: 280, damping: 70, mass: 1 }}
+                onClick={()=>scrollTo(0,0)}
             >
                 Get Started
             </motion.button>

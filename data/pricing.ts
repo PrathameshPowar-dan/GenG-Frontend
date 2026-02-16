@@ -3,7 +3,7 @@ import { IPricing } from "@/types";
 export const pricingData: IPricing[] = [
     {
         name: "Basic",
-        price: 29,
+        price: 0,
         period: "month",
         features: [
             "Access to all basic courses",
@@ -12,34 +12,21 @@ export const pricingData: IPricing[] = [
             "Course completion certificate",
             "Basic code review"
         ],
-        mostPopular: false
-    },
-    {
-        name: "Pro",
-        price: 79,
-        period: "month",
-        features: [
-            "Access to all Pro courses",
-            "Priority community support",
-            "30 practice projects",
-            "Course completion certificate",
-            "Advance code review",
-            "1-on-1 mentoring sessions",
-            "Job assistance"
-        ],
         mostPopular: true
     },
     {
-        name: "Enterprise",
-        price: 199,
+        name: "Pro",
+        price: 69,
         period: "month",
         features: [
-            "Access to all courses",
-            "Dedicated support",
-            "Unlimited projects",
-            "Course completion certificate",
-            "Premium code review"
+            "Video Dress Mode",
+            "Access to all Pro",
+            "Priority dress support",
+            "30 projects",
+            "Dress upscale",
+            "Advance AI",
+            "Ads assistance"
         ],
-        mostPopular: false
+        mostPopular: true
     }
 ];
