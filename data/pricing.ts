@@ -12,7 +12,7 @@ export const pricingData: IPricing[] = [
             "Course completion certificate",
             "Basic code review"
         ],
-        mostPopular: true
+        mostPopular: false
     },
     {
         name: "Pro",

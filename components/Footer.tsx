@@ -54,7 +54,7 @@ export default function Footer() {
                         <YoutubeIcon className="size-6 hover:text-purple-500" />
                     </a>
                 </div>
-                <p className="mt-3 text-center">&copy; {new Date().getFullYear()} <a href="https://prebuiltui.com?utm_source=pixels">PrebuiltUI</a></p>
+                <p className="mt-3 text-center">&copy; {new Date().getFullYear()} <a href="https://prebuiltui.com?utm_source=pixels">GenGenie</a></p>
             </motion.div>
         </footer>
     );
