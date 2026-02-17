@@ -2,7 +2,7 @@
 import { useState } from "react";
 import SectionTitle from "@/components/SectionTitle";
 import { motion, AnimatePresence } from "motion/react";
-import { PlayIcon, ImageIcon, VideoIcon, LayoutGridIcon, DownloadIcon, Share2Icon, SparklesIcon } from "lucide-react";
+import { PlayIcon, ImageIcon, VideoIcon, LayoutGridIcon, DownloadIcon, Share2Icon, TrashIcon, SparklesIcon } from "lucide-react";
 import Image from "next/image";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -48,38 +48,38 @@ const shareFile = async (url: string) => {
 
 // Mock Data
 const mockProjects: any[] = [
-    // {
-    //     id: "1",
-    //     name: "Summer Vibes",
-    //     generatedImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop",
-    //     generatedVideo: "",
-    //     type: "image",
-    //     createdAt: "2 days ago"
-    // },
-    // {
-    //     id: "2",
-    //     name: "Formal Suit Walk",
-    //     generatedImage: "https://images.unsplash.com/photo-1594938298603-c8148c47e356?q=80&w=1000&auto=format&fit=crop",
-    //     generatedVideo: "https://example.com/video.mp4",
-    //     type: "video",
-    //     createdAt: "5 days ago"
-    // },
-    // {
-    //     id: "3",
-    //     name: "Casual Friday",
-    //     generatedImage: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000&auto=format&fit=crop",
-    //     generatedVideo: "",
-    //     type: "image",
-    //     createdAt: "1 week ago"
-    // },
-    // {
-    //     id: "4",
-    //     name: "Runway Ready",
-    //     generatedImage: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1000&auto=format&fit=crop",
-    //     generatedVideo: "https://example.com/video2.mp4",
-    //     type: "video",
-    //     createdAt: "2 weeks ago"
-    // },
+    {
+        id: "1",
+        name: "Summer Vibes",
+        generatedImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop",
+        generatedVideo: "",
+        type: "image",
+        createdAt: "2 days ago"
+    },
+    {
+        id: "2",
+        name: "Formal Suit Walk",
+        generatedImage: "https://images.unsplash.com/photo-1594938298603-c8148c47e356?q=80&w=1000&auto=format&fit=crop",
+        generatedVideo: "https://example.com/video.mp4",
+        type: "video",
+        createdAt: "5 days ago"
+    },
+    {
+        id: "3",
+        name: "Casual Friday",
+        generatedImage: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000&auto=format&fit=crop",
+        generatedVideo: "",
+        type: "image",
+        createdAt: "1 week ago"
+    },
+    {
+        id: "4",
+        name: "Runway Ready",
+        generatedImage: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1000&auto=format&fit=crop",
+        generatedVideo: "https://example.com/video2.mp4",
+        type: "video",
+        createdAt: "2 weeks ago"
+    },
 ];
 
 export default function MyClothesPage() {
@@ -199,6 +199,10 @@ function ProjectCard({ project }: any) {
         setIsSharing(false);
     };
 
+    const handleDelete = () => {
+        toast.success(`Delete project: ${project.name}`);
+    };
+
     return (
         <motion.div
             layout
@@ -256,6 +260,13 @@ function ProjectCard({ project }: any) {
                         title="Share this creation"
                     >
                         <Share2Icon size={14} />
+                    </button>
+                    <button
+                        onClick={handleDelete}
+                        className="p-2 bg-slate-800 hover:bg-red-700 text-slate-200 hover:text-white rounded-lg transition-colors"
+                        title="Delete this creation"
+                    >
+                        <TrashIcon size={14} />
                     </button>
                 </div>
             </div>
