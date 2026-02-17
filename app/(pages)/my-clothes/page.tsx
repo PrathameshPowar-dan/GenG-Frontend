@@ -6,39 +6,39 @@ import { PlayIcon, ImageIcon, VideoIcon, LayoutGridIcon, DownloadIcon, Share2Ico
 import Image from "next/image";
 
 // Mock Data
-const mockProjects = [
-    {
-        id: "1",
-        name: "Summer Vibes",
-        generatedImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop",
-        generatedVideo: "",
-        type: "image",
-        createdAt: "2 days ago"
-    },
-    {
-        id: "2",
-        name: "Formal Suit Walk",
-        generatedImage: "https://images.unsplash.com/photo-1594938298603-c8148c47e356?q=80&w=1000&auto=format&fit=crop",
-        generatedVideo: "https://example.com/video.mp4",
-        type: "video",
-        createdAt: "5 days ago"
-    },
-    {
-        id: "3",
-        name: "Casual Friday",
-        generatedImage: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000&auto=format&fit=crop",
-        generatedVideo: "",
-        type: "image",
-        createdAt: "1 week ago"
-    },
-    {
-        id: "4",
-        name: "Runway Ready",
-        generatedImage: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1000&auto=format&fit=crop",
-        generatedVideo: "https://example.com/video2.mp4",
-        type: "video",
-        createdAt: "2 weeks ago"
-    },
+const mockProjects: any[] = [
+    // {
+    //     id: "1",
+    //     name: "Summer Vibes",
+    //     generatedImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop",
+    //     generatedVideo: "",
+    //     type: "image",
+    //     createdAt: "2 days ago"
+    // },
+    // {
+    //     id: "2",
+    //     name: "Formal Suit Walk",
+    //     generatedImage: "https://images.unsplash.com/photo-1594938298603-c8148c47e356?q=80&w=1000&auto=format&fit=crop",
+    //     generatedVideo: "https://example.com/video.mp4",
+    //     type: "video",
+    //     createdAt: "5 days ago"
+    // },
+    // {
+    //     id: "3",
+    //     name: "Casual Friday",
+    //     generatedImage: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=1000&auto=format&fit=crop",
+    //     generatedVideo: "",
+    //     type: "image",
+    //     createdAt: "1 week ago"
+    // },
+    // {
+    //     id: "4",
+    //     name: "Runway Ready",
+    //     generatedImage: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=1000&auto=format&fit=crop",
+    //     generatedVideo: "https://example.com/video2.mp4",
+    //     type: "video",
+    //     createdAt: "2 weeks ago"
+    // },
 ];
 
 export default function MyClothesPage() {
@@ -49,7 +49,7 @@ export default function MyClothesPage() {
     );
 
     return (
-        <div className="min-h-screen pt-20 pb-32 px-4 md:px-16 lg:px-24 xl:px-32">
+        <div className="min-h-screen pt-20 pb-10 px-4 md:px-16 lg:px-24 xl:px-32">
             <SectionTitle
                 text1="Gallery"
                 text2="My Clothes"
@@ -96,9 +96,9 @@ export default function MyClothesPage() {
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-center mt-20 text-slate-500"
+                    className="text-center border border-purple-500 rounded-2xl p-10 text-slate-500"
                 >
-                    <p>No creations found for this category.</p>
+                    <p className="text-gray-400">No creations found for this category.</p>
                     <button>
                         <a href="/create" className="mt-4 inline-flex items-center gap-2 px-6 py-2 rounded-full bg-purple-600 text-white shadow-lg shadow-purple-900/20 hover:bg-purple-700 transition-colors">
                             <SparklesIcon size={16} />
@@ -116,8 +116,8 @@ function FilterButton({ active, onClick, icon, label }: any) {
         <button
             onClick={onClick}
             className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-medium transition-all ${active
-                    ? "bg-purple-600 text-white shadow-lg shadow-purple-900/20"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800"
+                ? "bg-purple-600 text-white shadow-lg shadow-purple-900/20"
+                : "text-slate-400 hover:text-white hover:bg-slate-800"
                 }`}
         >
             {icon}

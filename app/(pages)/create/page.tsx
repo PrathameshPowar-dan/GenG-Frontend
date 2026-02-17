@@ -27,7 +27,7 @@ export default function CreatePage() {
     const ratios = ["1:1", "9:16", "16:9", "4:5"];
 
     return (
-        <div className="min-h-screen pt-20 pb-32 px-4 md:px-16 lg:px-24 xl:px-32">
+        <div className="min-h-screen pt-20 pb-10 px-4 md:px-16 lg:px-24 xl:px-32">
             <SectionTitle
                 text1="Create"
                 text2="Design your perfect look"
