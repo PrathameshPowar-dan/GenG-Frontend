@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import SectionTitle from "@/components/SectionTitle";
 import { motion } from "motion/react";
-import { XIcon, SparklesIcon, Image as ImageIcon, ShirtIcon } from "lucide-react";
+import { XIcon, SparklesIcon, Image as ImageIcon, ShirtIcon, VideoIcon, CameraIcon } from "lucide-react";
 import Image from "next/image";
 
 export default function CreatePage() {
@@ -11,6 +11,7 @@ export default function CreatePage() {
     const [creationName, setCreationName] = useState("");
     const [aspectRatio, setAspectRatio] = useState("9:16");
     const [prompt, setPrompt] = useState("");
+    const [generationType, setGenerationType] = useState<"image" | "video">("image");
 
     const personInputRef = useRef<HTMLInputElement>(null);
     const dressInputRef = useRef<HTMLInputElement>(null);
@@ -26,7 +27,7 @@ export default function CreatePage() {
     const ratios = ["1:1", "9:16", "16:9", "4:5"];
 
     return (
-        <div className="min-h-screen pt-20 pb-20 px-4 md:px-16 lg:px-24 xl:px-32">
+        <div className="min-h-screen pt-20 pb-32 px-4 md:px-16 lg:px-24 xl:px-32">
             <SectionTitle
                 text1="Create"
                 text2="Design your perfect look"
@@ -67,9 +68,9 @@ export default function CreatePage() {
                     {/* Preview */}
                     <div className="bg-purple-950/20 border border-purple-900/50 rounded-2xl p-8 min-h-75 flex-1 flex items-center justify-center text-center">
                         {personImage && dressImage ? (
-                            <div className="flex items-center gap-4 text-purple-300">
-                                <SparklesIcon className="size-6 animate-pulse" />
-                                <span>Ready to Generate Magic!</span>
+                            <div className="flex flex-col items-center gap-4 text-purple-300">
+                                <SparklesIcon className="size-8 animate-pulse" />
+                                <span className="text-lg font-medium">Ready to Generate {generationType === 'image' ? 'Image' : 'Video'}!</span>
                             </div>
                         ) : (
                             <p className="text-slate-500 text-sm">Upload both images to see the magic preview.</p>
@@ -96,6 +97,33 @@ export default function CreatePage() {
                         />
                     </div>
 
+                    {/* Generation Mode Selector */}
+                    <div>
+                        <label className="block text-slate-300 text-sm font-medium mb-3">Generation Mode</label>
+                        <div className="grid grid-cols-2 gap-3 p-1 bg-slate-950 border border-slate-800 rounded-xl">
+                            <button
+                                onClick={() => setGenerationType("image")}
+                                className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${generationType === "image"
+                                    ? "bg-purple-600 text-white shadow-md"
+                                    : "text-slate-400 hover:text-white"
+                                    }`}
+                            >
+                                <CameraIcon size={16} />
+                                Image
+                            </button>
+                            <button
+                                onClick={() => setGenerationType("video")}
+                                className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${generationType === "video"
+                                    ? "bg-purple-600 text-white shadow-md"
+                                    : "text-slate-400 hover:text-white"
+                                    }`}
+                            >
+                                <VideoIcon size={16} />
+                                Video
+                            </button>
+                        </div>
+                    </div>
+
                     {/* Aspect Ratio */}
                     <div>
                         <label className="block text-slate-300 text-sm font-medium mb-3">Aspect Ratio</label>
@@ -105,8 +133,8 @@ export default function CreatePage() {
                                     key={ratio}
                                     onClick={() => setAspectRatio(ratio)}
                                     className={`py-2 rounded-lg text-sm font-medium border transition-all ${aspectRatio === ratio
-                                            ? "bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-500/25"
-                                            : "bg-slate-950 border-slate-800 text-slate-400 hover:border-purple-500/50"
+                                        ? "bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-500/25"
+                                        : "bg-slate-950 border-slate-800 text-slate-400 hover:border-purple-500/50"
                                         }`}
                                 >
                                     {ratio}
@@ -130,9 +158,9 @@ export default function CreatePage() {
                     </div>
 
                     {/* Generate Button */}
-                    <button className="w-full py-4 bg-linear-to-r from-purple-600 to-pink-600 rounded-xl font-semibold text-white hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-purple-900/20 flex items-center justify-center gap-2">
+                    <button className="w-full py-4 mt-auto bg-linear-to-r from-purple-600 to-pink-600 rounded-xl font-semibold text-white hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-purple-900/20 flex items-center justify-center gap-2">
                         <SparklesIcon className="size-5 fill-white" />
-                        Generate Outfit
+                        Generate {generationType === 'image' ? 'Image' : 'Video'}
                     </button>
                 </motion.div>
             </div>
@@ -140,6 +168,7 @@ export default function CreatePage() {
     );
 }
 
+// Helper Component for Upload Cards
 function UploadCard({ title, icon, image, setImage, inputRef, handleFileChange }: any) {
     return (
         <div className="flex flex-col gap-2">
