@@ -39,9 +39,9 @@ export default function CreatePage() {
                 {/* Image Uploads */}
                 <motion.div
                     className="lg:col-span-7 flex flex-col gap-6 h-full"
-                    initial={{ x: -50, opacity: 0 }}
+                    initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
                 >
                     <div className="grid md:grid-cols-2 gap-6">
                         {/* Person Upload */}
@@ -81,9 +81,9 @@ export default function CreatePage() {
                 {/* Right Side */}
                 <motion.div
                     className="lg:col-span-5 flex flex-col gap-8 bg-slate-900/50 border border-slate-800 p-8 rounded-3xl h-full"
-                    initial={{ x: 50, opacity: 0 }}
+                    initial={{ x: 20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
                 >
                     {/* Creation Name */}
                     <div>

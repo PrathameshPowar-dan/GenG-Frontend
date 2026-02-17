@@ -4,6 +4,47 @@ import SectionTitle from "@/components/SectionTitle";
 import { motion, AnimatePresence } from "motion/react";
 import { PlayIcon, ImageIcon, VideoIcon, LayoutGridIcon, DownloadIcon, Share2Icon, SparklesIcon } from "lucide-react";
 import Image from "next/image";
+import toast, { Toaster } from "react-hot-toast";
+
+// Utility functions
+const downloadFile = async (url: string, fileName: string) => {
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(a);
+        toast.success("Downloaded successfully!");
+    } catch (error) {
+        console.error("Download failed:", error);
+        toast.error("Failed to download file");
+    }
+};
+
+const shareFile = async (url: string) => {
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(url);
+            toast.success("Link copied to clipboard!");
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = url;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            toast.success("Link copied to clipboard!");
+        }
+    } catch (error) {
+        console.error("Copy failed:", error);
+        toast.error("Failed to copy link");
+    }
+};
 
 // Mock Data
 const mockProjects: any[] = [
@@ -50,6 +91,7 @@ export default function MyClothesPage() {
 
     return (
         <div className="min-h-screen pt-20 pb-10 px-4 md:px-16 lg:px-24 xl:px-32">
+            <Toaster position="top-center" />
             <SectionTitle
                 text1="Gallery"
                 text2="My Clothes"
@@ -57,8 +99,14 @@ export default function MyClothesPage() {
             />
 
             {/* Filter Tabs */}
-            <div className="mt-12 flex justify-center">
-                <div className="flex bg-slate-900/50 border border-slate-800 p-1.5 rounded-full">
+            <motion.div
+                className="mt-12 flex justify-center"
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 20 }}
+            >
+                <div className="flex bg-slate-900/50 border border-slate-800 p-1.5 rounded-full backdrop-blur-md">
                     <FilterButton
                         active={filter === "all"}
                         onClick={() => setFilter("all")}
@@ -78,12 +126,15 @@ export default function MyClothesPage() {
                         label="Videos"
                     />
                 </div>
-            </div>
+            </motion.div>
 
             {/* Grid */}
             <motion.div
                 layout
                 className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
             >
                 <AnimatePresence mode="popLayout">
                     {filteredProjects.map((project) => (
@@ -127,6 +178,27 @@ function FilterButton({ active, onClick, icon, label }: any) {
 }
 
 function ProjectCard({ project }: any) {
+    const [isDownloading, setIsDownloading] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
+
+    const handleDownload = async () => {
+        setIsDownloading(true);
+        const fileExtension = project.type === 'video' ? 'mp4' : 'jpg';
+        const fileName = `${project.name.replace(/\s+/g, '_')}.${fileExtension}`;
+        const mediaUrl = project.type === 'video' ? project.generatedVideo : project.generatedImage;
+
+        await downloadFile(mediaUrl, fileName);
+        setIsDownloading(false);
+    };
+
+    const handleShare = async () => {
+        setIsSharing(true);
+        const mediaUrl = project.type === 'video' ? project.generatedVideo : project.generatedImage;
+
+        await shareFile(mediaUrl);
+        setIsSharing(false);
+    };
+
     return (
         <motion.div
             layout
@@ -169,11 +241,20 @@ function ProjectCard({ project }: any) {
 
                 {/* Action Buttons */}
                 <div className="flex gap-2 mt-4">
-                    <button className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs py-2 rounded-lg transition-colors">
+                    <button
+                        onClick={handleDownload}
+                        disabled={isDownloading}
+                        className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-700 disabled:opacity-50 text-slate-200 text-xs py-2 rounded-lg transition-colors"
+                    >
                         <DownloadIcon size={14} />
-                        Download
+                        {isDownloading ? "Downloading..." : "Download"}
                     </button>
-                    <button className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition-colors">
+                    <button
+                        onClick={handleShare}
+                        disabled={isSharing}
+                        className="p-2 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-700 disabled:opacity-50 text-slate-200 rounded-lg transition-colors"
+                        title="Share this creation"
+                    >
                         <Share2Icon size={14} />
                     </button>
                 </div>
