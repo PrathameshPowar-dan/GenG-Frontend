@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { PlayIcon, ImageIcon, VideoIcon, LayoutGridIcon, DownloadIcon, Share2Icon, TrashIcon, SparklesIcon } from "lucide-react";
 import Image from "next/image";
 import toast, { Toaster } from "react-hot-toast";
+import Link from "next/link";
 
 // Utility functions
 const downloadFile = async (url: string, fileName: string) => {
@@ -268,6 +269,12 @@ function ProjectCard({ project }: any) {
                     >
                         <TrashIcon size={14} />
                     </button>
+                </div>
+
+                <div className="mt-4 flex justify-center items-center">
+                    <Link href={`/my-clothes/${project.id}`} className="p-2 rounded-2xl bg-purple-500 w-full text-center text-sm text-white hover:text-gray-200 transition-colors">
+                            View Details
+                    </Link>
                 </div>
             </div>
         </motion.div>
