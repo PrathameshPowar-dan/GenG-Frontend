@@ -6,6 +6,13 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { navlinks } from "@/data/navlinks";
 import { INavLink } from "@/types";
+import {
+    SignInButton,
+    SignUpButton,
+    SignedIn,
+    SignedOut,
+    UserButton,
+} from '@clerk/nextjs'
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -31,9 +38,24 @@ export default function Navbar() {
                     ))}
                 </div>
 
-                <button className="hidden md:block px-6 py-2.5 bg-purple-600 hover:bg-purple-700 active:scale-95 transition-all rounded-full">
-                    Start free trial
-                </button>
+                {/* auth controls for desktop */}
+                <div className="hidden md:flex items-center gap-4">
+                    <SignedIn>
+                        <UserButton afterSignOutUrl="/" />
+                    </SignedIn>
+                    <SignedOut>
+                        <SignInButton>
+                            <button className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 active:scale-95 transition-all rounded-full">
+                                Sign In
+                            </button>
+                        </SignInButton>
+                        <SignUpButton>
+                            <button className="px-6 py-2.5 border border-purple-600 text-purple-600 hover:bg-purple-50 active:scale-95 transition-all rounded-full">
+                                Sign Up
+                            </button>
+                        </SignUpButton>
+                    </SignedOut>
+                </div>
                 <button onClick={() => setIsOpen(true)} className="md:hidden">
                     <MenuIcon size={26} className="active:scale-90 transition" />
                 </button>
@@ -45,6 +67,32 @@ export default function Navbar() {
                         {link.name}
                     </Link>
                 ))}
+
+                {/* mobile menu */}
+                <div className="flex flex-col items-center gap-4 pt-6">
+                    <SignedIn>
+                        <UserButton afterSignOutUrl="/" />
+                    </SignedIn>
+                    <SignedOut>
+                        <SignInButton>
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 transition-all rounded-full"
+                            >
+                                Sign In
+                            </button>
+                        </SignInButton>
+                        <SignUpButton>
+                            <button
+                                onClick={() => setIsOpen(false)}
+                                className="px-6 py-2.5 border border-purple-600 text-purple-600 hover:bg-purple-50 transition-all rounded-full"
+                            >
+                                Sign Up
+                            </button>
+                        </SignUpButton>
+                    </SignedOut>
+                </div>
+
                 <button onClick={() => setIsOpen(false)} className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-purple-600 hover:bg-purple-700 transition text-white rounded-md flex">
                     <XIcon />
                 </button>

@@ -13,7 +13,7 @@ export default function HeroSection() {
     return (
         <div className="relative flex flex-col items-center justify-center px-4 md:px-16 lg:px-24 xl:px-32">
             <div className="absolute top-30 -z-10 left-1/4 size-72 bg-purple-600 blur-[300px]"></div>
-            <motion.a href="https://prebuiltui.com?utm_source=pixels" className="group flex items-center gap-2 rounded-full p-1 pr-3 mt-44 text-purple-100 bg-purple-200/15"
+            <motion.a href="/create" className="group flex items-center gap-2 rounded-full p-1 pr-3 mt-44 text-purple-100 bg-purple-200/15"
                 initial={{ y: -20, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
@@ -48,7 +48,7 @@ export default function HeroSection() {
                 viewport={{ once: true }}
                 transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
             >
-                <button className="bg-purple-600 hover:bg-purple-700 text-white rounded-full px-7 h-11">
+                <button className="bg-purple-600 hover:bg-purple-700 text-white rounded-full px-7 h-11" onClick={() => window.location.href = '/create'}>
                     Dress Up!
                 </button>
                 <button className="flex items-center gap-2 border border-purple-900 hover:bg-purple-950/50 transition rounded-full px-6 h-11">
