@@ -44,12 +44,15 @@ export default function Navbar() {
                         <UserButton afterSignOutUrl="/" />
                     </SignedIn>
                     <SignedOut>
-                        <SignInButton>
+                        {/* Desktop Sign In */}
+                        <SignInButton mode="modal">
                             <button className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 active:scale-95 transition-all rounded-full">
                                 Sign In
                             </button>
                         </SignInButton>
-                        <SignUpButton>
+
+                        {/* Desktop Sign Up */}
+                        <SignUpButton mode="modal">
                             <button className="px-6 py-2.5 border border-purple-600 text-purple-600 hover:bg-purple-50 active:scale-95 transition-all rounded-full">
                                 Sign Up
                             </button>
