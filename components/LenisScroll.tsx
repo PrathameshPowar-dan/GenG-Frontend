@@ -19,8 +19,22 @@ export default function LenisScroll() {
 
         requestAnimationFrame(raf);
 
+        const observer = new MutationObserver(() => {
+            if (document.body.style.overflow === "hidden") {
+                lenis.stop(); // Pause smooth scrolling when modal is open
+            } else {
+                lenis.start(); // Resume when modal closes
+            }
+        });
+
+        observer.observe(document.body, {
+            attributes: true,
+            attributeFilter: ["style", "class"],
+        });
+
         return () => {
-            lenis.destroy();
+            observer.disconnect(); // Clean up the observer
+            lenis.destroy();       // Clean up Lenis
         };
     }, []);
 

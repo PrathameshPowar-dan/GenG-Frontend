@@ -1,5 +1,4 @@
 import ContactSection from "@/sections/ContactSection";
-import CTASection from "@/sections/CTASection";
 import FeaturesSection from "@/sections/FeaturesSection";
 import HeroSection from "@/sections/HeroSection";
 import PricingSection from "@/sections/PricingSection";
@@ -13,7 +12,6 @@ export default function Page() {
             <TestimonialSection />
             <PricingSection />
             <ContactSection />
-            <CTASection />
         </>
     );
 }
