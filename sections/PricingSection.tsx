@@ -4,6 +4,7 @@ import { pricingData } from "@/data/pricing";
 import { IPricing } from "@/types";
 import { CheckIcon } from "lucide-react";
 import { motion } from "motion/react";
+import { PricingTable } from "@clerk/nextjs";
 
 export default function PricingSection() {
     return (
@@ -11,7 +12,7 @@ export default function PricingSection() {
             <SectionTitle text1="Pricing" text2="Our Pricing Plans" text3="Flexible pricing options designed to meet your needs — whether you're just getting started or scaling up." />
 
             <div className="flex flex-wrap items-center justify-center gap-8 mt-20">
-                {pricingData.map((plan: IPricing, index: number) => (
+                {/* {pricingData.map((plan: IPricing, index: number) => (
                     <motion.div key={index} className={`w-72 text-center border border-purple-950 p-6 pb-16 rounded-xl ${plan.mostPopular ? 'bg-purple-950 relative' : 'bg-purple-950/30'}`}
                         initial={{ y: 150, opacity: 0 }}
                         whileInView={{ y: 0, opacity: 1 }}
@@ -46,7 +47,18 @@ export default function PricingSection() {
                             </button>
                         }
                     </motion.div>
-                ))}
+                ))} */}
+                <PricingTable appearance={{
+                    variables:{
+                        colorBackground:"none"
+                    },
+                    elements:{
+                        pricingTableCardBody: 'bg-white/6',
+                        pricingTableCardHeader: "bg-white/10",
+                        switchThumb: "bg-white"
+                    }
+                }}/>
+
             </div>
         </div>
     );
