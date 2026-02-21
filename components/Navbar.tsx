@@ -2,7 +2,7 @@
 import { MenuIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { navlinks } from "@/data/navlinks";
 import { INavLink } from "@/types";
@@ -12,15 +12,50 @@ import {
     SignedIn,
     SignedOut,
     UserButton,
+    useAuth,
+    useUser,
 } from '@clerk/nextjs'
+import api from "@/configs/axios";
+import toast from "react-hot-toast";
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
 
+    const { user } = useUser();
+    const { getToken } = useAuth();
+
+    const [credits, setCredits] = useState(0);
+
+    const getCredits = async () => {
+        try {
+            const token = await getToken();
+
+            const { data } = await api.get("/api/user/credits", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            setCredits(data.credits);
+        } catch (error: any) {
+            console.error("Error fetching credits:", error);
+            setCredits(0);
+            toast.error("Failed to fetch credits. Please try again later.");
+        }
+    }
+
+    useEffect(() => {
+        if (user) {
+            (async () => 
+                await getCredits()
+            )();
+        }
+    }, [user])
+
+
     return (
         <>
-            <motion.nav 
-    className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between w-[95%] max-w-7xl rounded-2xl py-4 px-6 md:px-12 backdrop-blur-md bg-slate-950/50 border border-slate-800"
+            <motion.nav
+                className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center justify-between w-[95%] max-w-7xl rounded-2xl py-4 px-6 md:px-12 backdrop-blur-md bg-slate-950/50 border border-slate-800"
                 initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
