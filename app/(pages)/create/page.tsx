@@ -2,29 +2,105 @@
 import { useState, useRef } from "react";
 import SectionTitle from "@/components/SectionTitle";
 import { motion } from "motion/react";
-import { XIcon, SparklesIcon, Image as ImageIcon, ShirtIcon, VideoIcon, CameraIcon } from "lucide-react";
+import { XIcon, SparklesIcon, Image as ImageIcon, ShirtIcon, VideoIcon, CameraIcon, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { useAuth, useUser } from "@clerk/nextjs";
+import api from "@/configs/axios";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function CreatePage() {
+    const { getToken } = useAuth();
+    const router = useRouter();
+    const user = useUser();
+    // console.log(user)
+
+    // Preview States (Strings)
     const [personImage, setPersonImage] = useState<string | null>(null);
     const [dressImage, setDressImage] = useState<string | null>(null);
+
+    // Actual File States for Backend
+    const [personFile, setPersonFile] = useState<File | null>(null);
+    const [dressFile, setDressFile] = useState<File | null>(null);
+
     const [creationName, setCreationName] = useState("");
     const [aspectRatio, setAspectRatio] = useState("9:16");
     const [prompt, setPrompt] = useState("");
     const [generationType, setGenerationType] = useState<"image" | "video">("image");
 
+    // Loading state for generation
+    const [isLoading, setIsLoading] = useState(false);
+
     const personInputRef = useRef<HTMLInputElement>(null);
     const dressInputRef = useRef<HTMLInputElement>(null);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setter: (val: string | null) => void) => {
+    const ratios = ["1:1", "9:16", "16:9", "4:5"];
+
+    const handleFileChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        setPreview: (val: string | null) => void,
+        setFile: (val: File | null) => void
+    ) => {
         const file = e.target.files?.[0];
         if (file) {
             const url = URL.createObjectURL(file);
-            setter(url);
+            setPreview(url);
+            setFile(file);
         }
     };
 
-    const ratios = ["1:1", "9:16", "16:9", "4:5"];
+    const handleGenerate = async () => {
+        if (!personFile || !dressFile) {
+            return toast.error("Please upload both Person and Dress images!");
+        }
+        if (!creationName.trim()) {
+            return toast.error("Please provide a Name/Product Name for this creation!");
+        }
+
+        try {
+            setIsLoading(true);
+            const token = await getToken();
+
+            // Create FormData for Multer processing
+            const formData = new FormData();
+
+            // Append files (Matches 'upload.array("images", 2)' in backend)
+            formData.append("images", personFile);
+            formData.append("images", dressFile);
+
+            // Append text fields
+            formData.append("name", creationName);
+            formData.append("productName", creationName); // Backend requires productName
+            formData.append("aspectRatio", aspectRatio);
+            formData.append("userPrompt", prompt);
+            formData.append("targetLength", "5");
+
+            const endpoint = generationType === "image" ? "/api/create/image" : "/api/create/video";
+
+            const { data } = await api.post(endpoint, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            toast.success(`${generationType === 'image' ? 'Image' : 'Video'} generated successfully!`);
+
+            // Push user to their details page or clothes gallery after success
+            if (data.creationId) {
+                router.push(`/my-clothes/${data.creationId}`);
+            } else {
+                router.push('/my-clothes');
+            }
+
+        } catch (error: any) {
+            console.error("Generation Error:", error);
+            const errorMsg = error.response?.data?.error || "Failed to generate creation.";
+            toast.error(errorMsg);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen pt-20 pb-10 px-4 md:px-16 lg:px-24 xl:px-32">
@@ -36,7 +112,7 @@ export default function CreatePage() {
 
             <div className="mt-16 grid lg:grid-cols-12 gap-10 max-w-6xl mx-auto items-stretch">
 
-                {/* Image Uploads */}
+                {/* Left Side: Image Uploads */}
                 <motion.div
                     className="lg:col-span-7 flex flex-col gap-6 h-full"
                     initial={{ x: -20, opacity: 0 }}
@@ -49,9 +125,9 @@ export default function CreatePage() {
                             title="Person Image"
                             icon={<ImageIcon className="size-6 mb-2 text-purple-400" />}
                             image={personImage}
-                            setImage={setPersonImage}
+                            setImage={(val: string | null) => { setPersonImage(val); if (!val) setPersonFile(null); }}
                             inputRef={personInputRef}
-                            handleFileChange={(e: any) => handleFileChange(e, setPersonImage)}
+                            handleFileChange={(e: any) => handleFileChange(e, setPersonImage, setPersonFile)}
                         />
 
                         {/* Dress Upload */}
@@ -59,9 +135,9 @@ export default function CreatePage() {
                             title="Dress Image"
                             icon={<ShirtIcon className="size-6 mb-2 text-pink-400" />}
                             image={dressImage}
-                            setImage={setDressImage}
+                            setImage={(val: string | null) => { setDressImage(val); if (!val) setDressFile(null); }}
                             inputRef={dressInputRef}
-                            handleFileChange={(e: any) => handleFileChange(e, setDressImage)}
+                            handleFileChange={(e: any) => handleFileChange(e, setDressImage, setDressFile)}
                         />
                     </div>
 
@@ -78,7 +154,7 @@ export default function CreatePage() {
                     </div>
                 </motion.div>
 
-                {/* Right Side */}
+                {/* Right Side: Configurations */}
                 <motion.div
                     className="lg:col-span-5 flex flex-col gap-8 bg-slate-900/50 border border-slate-800 p-8 rounded-3xl h-full"
                     initial={{ x: 20, opacity: 0 }}
@@ -143,7 +219,7 @@ export default function CreatePage() {
                         </div>
                     </div>
 
-                    {/* Promp */}
+                    {/* Prompt */}
                     <div className="flex-1 flex flex-col">
                         <div className="flex justify-between items-center mb-2">
                             <label className="text-slate-300 text-sm font-medium">Prompt (Optional)</label>
@@ -158,9 +234,26 @@ export default function CreatePage() {
                     </div>
 
                     {/* Generate Button */}
-                    <button className="w-full py-4 mt-auto bg-linear-to-r from-purple-600 to-pink-600 rounded-xl font-semibold text-white hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-purple-900/20 flex items-center justify-center gap-2">
-                        <SparklesIcon className="size-5 fill-white" />
-                        Generate {generationType === 'image' ? 'Image' : 'Video'}
+                    <button
+                        onClick={handleGenerate}
+                        disabled={isLoading}
+                        className={`w-full py-4 mt-auto rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2
+                            ${isLoading
+                                ? "bg-slate-800 cursor-not-allowed opacity-80"
+                                : "bg-linear-to-r from-purple-600 to-pink-600 hover:opacity-90 active:scale-[0.98] shadow-lg shadow-purple-900/20"
+                            }`}
+                    >
+                        {isLoading ? (
+                            <>
+                                <Loader2 className="size-5 animate-spin" />
+                                Processing Magic...
+                            </>
+                        ) : (
+                            <>
+                                <SparklesIcon className="size-5 fill-white" />
+                                Generate {generationType === 'image' ? 'Image' : 'Video'}
+                            </>
+                        )}
                     </button>
                 </motion.div>
             </div>
