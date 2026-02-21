@@ -35,6 +35,7 @@ export default function Navbar() {
                     Authorization: `Bearer ${token}`
                 }
             })
+            console.log(data)
             setCredits(data.credits);
         } catch (error: any) {
             console.error("Error fetching credits:", error);
