@@ -24,7 +24,8 @@ export default function Navbar() {
     const { user } = useUser();
     const { getToken } = useAuth();
 
-    const [credits, setCredits] = useState(0);
+    const [ImageCredits, setImageCredits] = useState({ ImageCredits: 0 });
+    const [VideoCredits, setVideoCredits] = useState({ VideoCredits: 0 });
 
     const getCredits = async () => {
         try {
@@ -36,19 +37,19 @@ export default function Navbar() {
                 }
             })
             console.log(data)
-            setCredits(data.credits);
+            setImageCredits(data);
+            setVideoCredits(data);
         } catch (error: any) {
             console.error("Error fetching credits:", error);
-            setCredits(0);
+            setImageCredits({ ImageCredits: 0 });
+            setVideoCredits({ VideoCredits: 0 });
             toast.error("Failed to fetch credits. Please try again later.");
         }
     }
 
     useEffect(() => {
         if (user) {
-            (async () => 
-                await getCredits()
-            )();
+            getCredits()
         }
     }, [user])
 
@@ -73,6 +74,16 @@ export default function Navbar() {
                             {link.name}
                         </Link>
                     ))}
+                </div>
+
+                <div>
+                    {user && (
+                        <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-purple-600/10 border border-purple-600 text-purple-600 rounded-full">
+                            <span>Credits:</span>
+                            <span>I-{ImageCredits.ImageCredits}</span>
+                            <span>V-{VideoCredits.VideoCredits}</span>
+                        </div>
+                    )}
                 </div>
 
                 {/* auth controls for desktop */}
