@@ -1,10 +1,10 @@
 'use client'
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import SectionTitle from "@/components/SectionTitle";
 import { motion } from "motion/react";
-import { XIcon, SparklesIcon, Image as ImageIcon, ShirtIcon, VideoIcon, CameraIcon, Loader2 } from "lucide-react";
+import { XIcon, SparklesIcon, Image as ImageIcon, ShirtIcon, VideoIcon, CameraIcon, Loader2, LockIcon } from "lucide-react";
 import Image from "next/image";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import api from "@/configs/axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -12,8 +12,6 @@ import { useRouter } from "next/navigation";
 export default function CreatePage() {
     const { getToken } = useAuth();
     const router = useRouter();
-    const user = useUser();
-    // console.log(user)
 
     // Preview States (Strings)
     const [personImage, setPersonImage] = useState<string | null>(null);
@@ -27,18 +25,45 @@ export default function CreatePage() {
     const [aspectRatio, setAspectRatio] = useState("9:16");
     const [prompt, setPrompt] = useState("");
     const [generationType, setGenerationType] = useState<"image" | "video">("image");
-
-    // Loading state for generation
+    
+    // Loading & Credit States
     const [isLoading, setIsLoading] = useState(false);
+    const [isFetchingCredits, setIsFetchingCredits] = useState(true);
+    const [credits, setCredits] = useState({ image: 0, video: 0 });
 
     const personInputRef = useRef<HTMLInputElement>(null);
     const dressInputRef = useRef<HTMLInputElement>(null);
 
     const ratios = ["1:1", "9:16", "16:9", "4:5"];
 
+    // Fetch user credits on mount to check if video is allowed
+    useEffect(() => {
+        const fetchCredits = async () => {
+            try {
+                const token = await getToken();
+                if (!token) return;
+                
+                const { data } = await api.get("/api/user/credits", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                
+                setCredits({
+                    image: data.ImageCredits || 0,
+                    video: data.VideoCredits || 0
+                });
+            } catch (error) {
+                console.error("Error fetching credits:", error);
+            } finally {
+                setIsFetchingCredits(false);
+            }
+        };
+
+        fetchCredits();
+    }, [getToken]);
+
     const handleFileChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        setPreview: (val: string | null) => void,
+        e: React.ChangeEvent<HTMLInputElement>, 
+        setPreview: (val: string | null) => void, 
         setFile: (val: File | null) => void
     ) => {
         const file = e.target.files?.[0];
@@ -49,6 +74,14 @@ export default function CreatePage() {
         }
     };
 
+    const handleVideoSelect = () => {
+        if (credits.video <= 0) {
+            toast.error("You don't have any Video Credits left!");
+            return;
+        }
+        setGenerationType("video");
+    };
+
     const handleGenerate = async () => {
         if (!personFile || !dressFile) {
             return toast.error("Please upload both Person and Dress images!");
@@ -57,26 +90,31 @@ export default function CreatePage() {
             return toast.error("Please provide a Name/Product Name for this creation!");
         }
 
+        // Final safety check just in case
+        if (generationType === "video" && credits.video <= 0) {
+            return toast.error("Insufficient Video Credits!");
+        }
+
         try {
             setIsLoading(true);
             const token = await getToken();
 
             // Create FormData for Multer processing
             const formData = new FormData();
-
-            // Append files (Matches 'upload.array("images", 2)' in backend)
+            
+            // Append files
             formData.append("images", personFile);
             formData.append("images", dressFile);
-
+            
             // Append text fields
             formData.append("name", creationName);
-            formData.append("productName", creationName); // Backend requires productName
+            formData.append("productName", creationName);
             formData.append("aspectRatio", aspectRatio);
             formData.append("userPrompt", prompt);
             formData.append("targetLength", "5");
 
             const endpoint = generationType === "image" ? "/api/create/image" : "/api/create/video";
-
+            
             const { data } = await api.post(endpoint, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -85,9 +123,8 @@ export default function CreatePage() {
             });
 
             toast.success(`${generationType === 'image' ? 'Image' : 'Video'} generated successfully!`);
-
-            // Push user to their details page or clothes gallery after success
-            if (data.creationId) {
+            
+            if(data.creationId) {
                 router.push(`/my-clothes/${data.creationId}`);
             } else {
                 router.push('/my-clothes');
@@ -176,26 +213,40 @@ export default function CreatePage() {
                     {/* Generation Mode Selector */}
                     <div>
                         <label className="block text-slate-300 text-sm font-medium mb-3">Generation Mode</label>
-                        <div className="grid grid-cols-2 gap-3 p-1 bg-slate-950 border border-slate-800 rounded-xl">
+                        <div className="grid grid-cols-2 gap-3 p-1 bg-slate-950 border border-slate-800 rounded-xl relative">
+                            {isFetchingCredits && (
+                                <div className="absolute inset-0 z-10 bg-slate-950/50 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                                    <Loader2 className="size-4 animate-spin text-purple-500" />
+                                </div>
+                            )}
+                            
                             <button
                                 onClick={() => setGenerationType("image")}
                                 className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${generationType === "image"
                                     ? "bg-purple-600 text-white shadow-md"
-                                    : "text-slate-400 hover:text-white"
+                                    : "text-slate-400 hover:text-white hover:bg-slate-800/50"
                                     }`}
                             >
                                 <CameraIcon size={16} />
                                 Image
                             </button>
+                            
                             <button
-                                onClick={() => setGenerationType("video")}
+                                onClick={handleVideoSelect}
                                 className={`flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${generationType === "video"
                                     ? "bg-purple-600 text-white shadow-md"
-                                    : "text-slate-400 hover:text-white"
+                                    : credits.video <= 0 && !isFetchingCredits
+                                        ? "text-slate-500 opacity-60 cursor-not-allowed bg-slate-900/50"
+                                        : "text-slate-400 hover:text-white hover:bg-slate-800/50"
                                     }`}
                             >
-                                <VideoIcon size={16} />
+                                {credits.video <= 0 && !isFetchingCredits ? <LockIcon size={14} /> : <VideoIcon size={16} />}
                                 Video
+                                {credits.video <= 0 && !isFetchingCredits && (
+                                    <span className="ml-1 text-[9px] bg-slate-800 border border-slate-700 px-1.5 py-0.5 rounded text-slate-400">
+                                        Locked
+                                    </span>
+                                )}
                             </button>
                         </div>
                     </div>
@@ -234,12 +285,12 @@ export default function CreatePage() {
                     </div>
 
                     {/* Generate Button */}
-                    <button
+                    <button 
                         onClick={handleGenerate}
-                        disabled={isLoading}
+                        disabled={isLoading || isFetchingCredits}
                         className={`w-full py-4 mt-auto rounded-xl font-semibold text-white transition-all flex items-center justify-center gap-2
-                            ${isLoading
-                                ? "bg-slate-800 cursor-not-allowed opacity-80"
+                            ${isLoading || isFetchingCredits
+                                ? "bg-slate-800 cursor-not-allowed opacity-80" 
                                 : "bg-linear-to-r from-purple-600 to-pink-600 hover:opacity-90 active:scale-[0.98] shadow-lg shadow-purple-900/20"
                             }`}
                     >

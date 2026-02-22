@@ -6,7 +6,46 @@ import { ArrowLeftIcon, DownloadIcon, Share2Icon, SparklesIcon, CalendarIcon, Sc
 import Image from "next/image";
 import { useAuth } from "@clerk/nextjs";
 import api from "@/configs/axios";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+
+const downloadFile = async (url: string, fileName: string) => {
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(a);
+        toast.success("Downloaded successfully!");
+    } catch (error) {
+        console.error("Download failed:", error);
+        toast.error("Failed to download file");
+    }
+};
+
+const shareFile = async (url: string) => {
+    try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(url);
+            toast.success("Link copied to clipboard!");
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = url;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            toast.success("Link copied to clipboard!");
+        }
+    } catch (error) {
+        console.error("Copy failed:", error);
+        toast.error("Failed to copy link");
+    }
+};
 
 export default function ProjectDetailsPage() {
     const params = useParams();
@@ -16,6 +55,10 @@ export default function ProjectDetailsPage() {
     const projectId = params.id;
     const [project, setProject] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Button states
+    const [isDownloading, setIsDownloading] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
 
     useEffect(() => {
         const fetchProjectDetails = async () => {
@@ -27,12 +70,11 @@ export default function ProjectDetailsPage() {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
-                console.log(data)
                 setProject(data.creation);
             } catch (error) {
                 console.error("Failed to fetch project:", error);
                 toast.error("Failed to load details");
-                router.push('/my-clothes');
+                router.push('/my-clothes'); // Redirect back if missing
             } finally {
                 setIsLoading(false);
             }
@@ -42,6 +84,26 @@ export default function ProjectDetailsPage() {
             fetchProjectDetails();
         }
     }, [projectId, getToken, router]);
+
+    const handleDownload = async () => {
+        setIsDownloading(true);
+        const isVideo = !!project.generatedVideo;
+        const fileExtension = isVideo ? 'mp4' : 'jpg';
+        const fileName = `${project.name.replace(/\s+/g, '_')}.${fileExtension}`;
+        const mediaUrl = isVideo ? project.generatedVideo : project.generatedImage;
+
+        if (mediaUrl) await downloadFile(mediaUrl, fileName);
+        setIsDownloading(false);
+    };
+
+    const handleShare = async () => {
+        setIsSharing(true);
+        const isVideo = !!project.generatedVideo;
+        const mediaUrl = isVideo ? project.generatedVideo : project.generatedImage;
+
+        if (mediaUrl) await shareFile(mediaUrl);
+        setIsSharing(false);
+    };
 
     if (isLoading) {
         return (
@@ -64,6 +126,7 @@ export default function ProjectDetailsPage() {
 
     return (
         <div className="min-h-screen pt-24 pb-32 px-4 md:px-16 lg:px-24 xl:px-32">
+            <Toaster position="top-center" />
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -79,13 +142,21 @@ export default function ProjectDetailsPage() {
 
                 {!project.isGenerating && !project.error && (
                     <div className="flex gap-3">
-                        <button className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">
-                            <Share2Icon size={16} />
+                        <button
+                            onClick={handleShare}
+                            disabled={isSharing}
+                            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+                        >
+                            {isSharing ? <Loader2 className="size-4 animate-spin" /> : <Share2Icon size={16} />}
                             Share
                         </button>
-                        <button className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg shadow-purple-500/25 transition-all">
-                            <DownloadIcon size={16} />
-                            Download Original
+                        <button
+                            onClick={handleDownload}
+                            disabled={isDownloading}
+                            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg shadow-purple-500/25 transition-all"
+                        >
+                            {isDownloading ? <Loader2 className="size-4 animate-spin" /> : <DownloadIcon size={16} />}
+                            {isDownloading ? "Downloading..." : "Download Original"}
                         </button>
                     </div>
                 )}

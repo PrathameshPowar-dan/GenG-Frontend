@@ -51,10 +51,10 @@ export default function HeroSection() {
                 <button className="bg-purple-600 hover:bg-purple-700 text-white rounded-full px-7 h-11" onClick={() => window.location.href = '/create'}>
                     Dress Up!
                 </button>
-                <button className="flex items-center gap-2 border border-purple-900 hover:bg-purple-950/50 transition rounded-full px-6 h-11">
+                {/* <button className="flex items-center gap-2 border border-purple-900 hover:bg-purple-950/50 transition rounded-full px-6 h-11">
                     <VideoIcon strokeWidth={1} />
                     <span>Watch demo</span>
-                </button>
+                </button> */}
             </motion.div>
 
             <div className="flex flex-wrap justify-center items-center gap-4 md:gap-14 mt-12">
