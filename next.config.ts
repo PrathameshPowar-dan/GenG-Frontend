@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
                 hostname: 'raw.githubusercontent.com',
                 pathname: '**',
             },
+            { protocol: 'https', hostname: 'images.unsplash.com' },
+            { protocol: 'https', hostname: 'res.cloudinary.com' } // Assuming your backend uses Cloudinary
         ],
         unoptimized: true,
     },
